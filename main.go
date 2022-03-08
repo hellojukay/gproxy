@@ -35,6 +35,17 @@ func main() {
 		newTarget := Join(proxy, target)
 		origin := target
 		Run([]func() error{Clone(newTarget), SetOrigin(origin)})
+	case "wget":
+		wget := flag.NewFlagSet("wget", flag.ExitOnError)
+		wget.StringVar(&proxy, "proxy", "https://ghproxy.com/", "github proxy")
+		wget.StringVar(&target, "target", "", "github repo or file")
+		wget.BoolVar(&verbose, "verbose", false, "show debug log")
+		wget.Parse(os.Args[2:])
+		if verbose {
+			fmt.Printf("runing %s with proxy %s and target %s\n", subcommand, proxy, target)
+		}
+		newTarget := Join(proxy, target)
+		Run([]func() error{Wget(newTarget)})
 	default:
 		if len(os.Args) < 2 {
 			fmt.Println("expected 'clone' or 'wget' subcommands")
